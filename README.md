@@ -1,39 +1,33 @@
 # Project Name
 
-> Project description
+This is a system design capstone mock project representing the product information component of Amazon, called 'Hackazon' with the goal to optimize the database to contain large number of data.
 
 ## Related Projects
-
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
+ https://github.com/Hackazon-System-Design-Captstone/sonia-proxy
+ 
 
 ## Table of Contents
 
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
+1. CRUD
 
-## Usage
 
-> Some usage instructions
+## API routes:
 
-## Requirements
+Create:
+- adds new product information to database (/productInfo)
 
-An `nvmrc` file is included if using [nvm](https://github.com/creationix/nvm).
+Read: 
+- Gets the information for the specific product based on its ID (/get)
 
-- Node 6.13.0
-- etc
+Update:
+- updates seller's name and Product ID (/productInfo/:id)
 
-## Development
+Delete:
+- deletes an item based on its product ID (/productInfo/:id)
+
 
 ### Installing Dependencies
 
-From within the root directory:
-
-```sh
-npm install -g webpack
 npm install
-```
+
 
