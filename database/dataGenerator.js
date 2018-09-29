@@ -50,7 +50,7 @@ const prices = () => {
 
 // used price is between 50% to 95% of the price
 const usedPrices = () => {
-  const newLocal = prices * (randomNumFromRange(50, 95) / 100);
+  const newLocal = prices() * (randomNumFromRange(50, 95) / 100);
   return newLocal;
 };
 
@@ -85,52 +85,98 @@ const randomUrl = () => {
 // ======================================= generating 10M random data =====================
 
 // const stream = fs.createWriteStream('./randomData.csv');
+const file = fs.createWriteStream('./randomData.csv');
 let data = 'productName,sellerName,ratingsAverage,ratingsCount,questionsCount,amazonsChoice,categoryName,priceList,price,freeReturns,freeShipping,soldByName,available,hasCountDown,description,usedCount,usedPrice,imageUrl,varKey,varValue';
+let rounds = 50;
+const generateRandomData = () => {
+  for (let j = 1; j <= 200000; j += 1) {
+    let productName = `Clean-O-Bot${j}`;
+    let sellerName = faker.company.companyName();
+    let ratingsAverage = randomNumFromRange(0.5, 5, 'log', 1);
+    let ratingsCount = randomNumFromRange(5, 1000);
+    let questionsCount = randomNumFromRange(2, 30, 'log');
+    let amazonsChoice = randomNumFromRange(0, 1);
+    let categoryName = department;
+    let priceList = listPrices;
+    let price = prices();
+    let freeReturns = randomNumFromRange(0, 1);
+    let freeShipping = randomNumFromRange(0, 1);
+    let soldByName = `best-company${j}`;
+    let available = randomNumFromRange(0, 1, 'log');
+    let hasCountDown = randomNumFromRange(0, 1);
+    let description = faker.lorem.lines().replace(/\n/g, '\\n');
+    let usedCount = randomNumFromRange(1, 20);
+    let usedPrice = usedPrices();
+    let imageUrl = randomUrl();
+    let varKey = categoryKey();
+    let varValue = categoryValue();
 
-const generateRandomData = (i) => {
-  if (i > 9) {
-    return;
-  }
-  data = '';
-  for (let j = 1; j <= 1000000; j += 1) {
-    const productName = `Clean-O-Bot${j}`;
-    const sellerName = faker.company.companyName();
-    const ratingsAverage = randomNumFromRange(0.5, 5, 'log', 1);
-    const ratingsCount = randomNumFromRange(5, 1000);
-    const questionsCount = randomNumFromRange(2, 30, 'log');
-    const amazonsChoice = randomNumFromRange(0, 1);
-    const categoryName = department;
-    const priceList = listPrices;
-    const price = prices();
-    const freeReturns = randomNumFromRange(0, 1);
-    const freeShipping = randomNumFromRange(0, 1);
-    const soldByName = `best-company${i}`;
-    const available = randomNumFromRange(0, 1, 'log');
-    const hasCountDown = randomNumFromRange(0, 1);
-    const description = faker.lorem.lines().replace(/\n/g, '\\n');
-    const usedCount = randomNumFromRange(1, 20);
-    const usedPrice = usedPrices();
-    const imageUrl = randomUrl();
-    const varKey = categoryKey();
-    const varValue = categoryValue();
     data += `${productName},${sellerName},${ratingsAverage},${ratingsCount},${questionsCount},${amazonsChoice},${categoryName},${priceList},${price},${freeReturns},${freeShipping},${soldByName},${available},${hasCountDown},${description},${usedCount},${usedPrice},${imageUrl},${varKey},${varValue}\n`;
-    console.log(data);
+
+    productName = null;
+    sellerName = null;
+    ratingsAverage = null;
+    ratingsCount = null;
+    questionsCount = null;
+    amazonsChoice = null;
+    categoryName = null;
+    priceList = null;
+    price = null;
+    freeReturns = null;
+    freeShipping = null;
+    soldByName = null;
+    available = null;
+    hasCountDown = null;
+    description = null;
+    usedCount = null;
+    usedPrice = null;
+    imageUrl = null;
+    varKey = null;
+    varValue = null;
   }
-  fs.appendFile('./randomData.csv', data, (error) => {
-    if (error) {
-      throw error;
-    } else {
-      console.log('wrote', i);
-      generateRandomData(i + 1);
+  if (rounds > 0) {
+    rounds -= 1;
+    let drainThis = file.write(data);
+    if (!drainThis) {
+      drainThis = true;
+      data = '';
+      console.log( 50 - rounds);
+      file.once('drain', (err) => {
+        if (err) {
+          console.log('error');
+        } else {
+          generateRandomData();
+        }
+      });
+      return;
     }
-  });
+  }
+};
+generateRandomData();
+  
+
+  // fs.appendFile('./randomData.csv', data, (error) => {
+  //   if (error) {
+  //     throw error;
+  //   } else {
+  //     data = '';
+  //     for (let i = 1; i <= 20; i += 1) {
+  //       console.log(i);
+  //       generateRandomData();
+  //     }
+  //   }
+  // });
 
   // fs.appendFile('',data,'utf8') <= after creating a batch is done so inside of loop
   // fs.write(data into a file  , in the callback if not error, recurse) <= outside of loop
-};
-fs.writeFile('./randomData.csv', data, (error) => {
-  if (error) {
-    throw error;
-  }
-  generateRandomData(0);
-});
+
+
+// fs.writeFile('./randomData.csv', data, (error) => {
+//   if (error) {
+//     throw error;
+//   }
+//   for (let i = 1; i <= 20; i += 1) {
+//     console.log(i);
+//     generateRandomData();
+//   }
+// });

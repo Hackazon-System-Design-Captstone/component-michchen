@@ -8,7 +8,7 @@
     "start_prod": "node server.js",
     "react-dev": "webpack -d --watch",
     "test": "jest",
-    "seed": "node database/seed.js"
+    "seed": "node --trace_gc database/seed.js"
   },
   "repository": {
     "type": "git",
