@@ -3,7 +3,7 @@
 // run "node database/faker.js" in the terminal
 // node database/seed.js
 
-const numToGenerate = 100;
+// const numToGenerate = 100;
 
 /*
 INSERT INTO products (id, productName, productUrl, sellerName, sellerUrl,
@@ -23,16 +23,16 @@ INSERT INTO images (productId,varKey,varValue,imageUrl) VALUES (101, "","",
 "https://images-na.ssl-images-amazon.com/images/I/61Rh3tVbr-L._SL1200_.jpg");
 */
 
-const cats = require('./cats');
 const faker = require('faker');
-const db = require('./db');
+const cats = require('./cats');
 
 // possible product variations to choose from
 const variations = [
   {
     category: 'color',
     data: ['Medium Spring Green', 'Coral', 'Lawn Green', 'Yellow', 'Orange', 'Light Steel Blue', 'Fire Brick', 'Light Grey', 'Dark Goldenrod', 'Burly Wood', 'Dark Slate Blue', 'Cornflower Blue', 'Powder Blue', 'Dark Blue', 'Dark Slate Gray', 'Maroon', 'Silver', 'Light Salmon', 'Seashell', 'Medium Sea Green'],
-  }, {
+  },
+  {
     category: 'size',
     data: [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
   },
@@ -45,7 +45,7 @@ exports.truncateToDecimalPlace = function truncateToDecimalPlace(num, places) {
 };
 
 exports.randomNumFromRange = function randomNumFromRange(
-  lowerBound, upperBound, growthRate, decimalPlaces
+  lowerBound, upperBound, growthRate, decimalPlaces,
 ) {
   let growthRateCopy;
   if (growthRate === undefined || growthRate === 'exp') {
@@ -138,24 +138,22 @@ exports.createImageQuery = function createImageQuery(howMany) {
   return `${queryConcat};`;
 };
 
-console.log(exports.createProductQuery(100));
+// console.log(exports.createProductQuery(100));
 
-/*
+
 // reset products table and insert rows
-db.resetTable('products', () => {
-  db.insertRow(exports.createProductQuery(numToGenerate), () => {
-    console.log(`  INSERTED ${numToGenerate} ROWS into products`);
+// db.resetTable('products', () => {
+//   db.insertRow(exports.createProductQuery(numToGenerate), () => {
+//     console.log(`  INSERTED ${numToGenerate} ROWS into products`);
 
-    // reset images table and insert rows
-    db.resetTable('images', () => {
-      db.insertRow(exports.createImageQuery(numToGenerate), () => {
-        // log success
-        console.log(`  INSERTED ${numToGenerate} ROWS into images`);
-        console.log('Data generation finished. Press ctrl-C to exit.');
-      });
-    });
-  });
-});
-
-
-*/
+//     // reset images table and insert rows
+//     db.resetTable('images', () => {
+//       db.insertRow(exports.createImageQuery(numToGenerate), () => {
+//         // log success
+//         console.log(`  INSERTED ${numToGenerate} ROWS into images`);
+//         console.log('Data generation finished. Press ctrl-C to exit.');
+//       });
+//     });
+//   });
+// });
+// console.log('success in seeding');

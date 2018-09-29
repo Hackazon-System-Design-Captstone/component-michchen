@@ -1,30 +1,21 @@
 const mysql = require('mysql');
-// console.log(process.env);
+
 const con = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: 'hramazon',
-  // port: 9001
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'amazon',
+
 });
 
-// const con = mysql.createConnection({
-//   host: 'hramazon.cwakgm40gffr.us-west-1.rds.amazonaws.com',
-//   user: 'pikapoo',
-//   password: '123password',
-//   database: 'hramazon',
-//   // port: 3306
-// });
-
-
 con.connect((err) => {
-  // console.log('con.connect--------------------------------');
   if (err) {
     console.log('db.js > connection error', err);
   } else {
     console.log('connection success!');
   }
 });
+
 
 // for creating fake data (faker.js)
 exports.resetTable = (table, cb) => {
@@ -37,6 +28,27 @@ exports.resetTable = (table, cb) => {
   });
 };
 
+// ====================== update table  ======================
+
+exports.updateTable = (id, value, cb) => {
+  con.query(`UPDATE products SET sellerName = ? where id = ${id}`, value, cb);
+  con.query(`UPDATE images SET productId = ? where id = ${id}`, value, cb);
+};
+
+// ====================== delete from table ====================
+exports.deleteFromTable = (id, cb) => {
+  con.query('delete from products where id=?', id, cb);
+  con.query('delete from images where id=?', id, cb);
+};
+
+// ====================== post to table ===================
+
+exports.addToTable = (data, cb) => {
+  con.query('INSERT INTO products (productName, sellerName, ratingsAverage, ratingsCount, questionsCount, amazonChoice, categoryName, price, priceList, freeReturns, freeShipping, soldByName, available, hasCountdown, description, usedCount, usedPrice) VALUES ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?', data, cb);
+  con.query('INSERT INTO images (productId, imageUrl, varKey, varValue) VALUES ?, ?, ?, ?', data, cb);
+};
+
+// ======================================================
 exports.insertRow = (query, cb) => {
   con.query(query, (err, res) => {
     if (err) {
@@ -48,12 +60,7 @@ exports.insertRow = (query, cb) => {
 };
 
 exports.getProduct = (id, cb) => {
-  console.log('exports.getProduct');
-  console.log(`SELECT * FROM products WHERE id=${id}`);
-
   con.query(`SELECT * FROM products WHERE id=${id}`, (err, result) => {
-    // console.log('selected sucessfully from products');
-    // console.log(result);
     const productObj = result[0];
     con.query(`SELECT * FROM images WHERE productId=${id}`, (error, res) => {
       const imgArr = {};
@@ -78,4 +85,4 @@ exports.getProduct = (id, cb) => {
       cb(productObj);
     });
   });
-};
+}
