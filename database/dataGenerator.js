@@ -34,23 +34,23 @@ const randomNumFromRange = (lowerBound, upperBound, growthRate, decimalPlaces) =
 };
 
 // generate a random sequence of departments for breadcrumb
-let department = `${faker.commerce.department()}`;
-const times = Math.round(Math.random() * 4) + 1;
-Array(times).fill('').forEach(() => {
-  department += `\n${faker.commerce.department()}`;
-});
+// let department = `${faker.commerce.department()}`;
+// const times = Math.round(Math.random() * 4) + 1;
+// Array(times).fill('').forEach(() => {
+//   department += `-${faker.commerce.department()}`;
+// });
 // the 9 is to put the price within an affordable range haha
-const listPrices = parseInt(faker.commerce.price() / 9, 10);
+const listPrices = Number(faker.commerce.price());
 
 // price is between 80% to 95% of the list price
 const prices = () => {
-  const newLocal = listPrices * (randomNumFromRange(80, 95) / 100);
+  const newLocal = listPrices * (randomNumFromRange(80, 95));
   return newLocal;
 };
 
 // used price is between 50% to 95% of the price
 const usedPrices = () => {
-  const newLocal = prices() * (randomNumFromRange(50, 95) / 100);
+  const newLocal = prices() * (randomNumFromRange(50, 95));
   return newLocal;
 };
 
@@ -86,17 +86,19 @@ const randomUrl = () => {
 
 // const stream = fs.createWriteStream('./randomData.csv');
 const file = fs.createWriteStream('./randomData.csv');
-let data = 'productName,sellerName,ratingsAverage,ratingsCount,questionsCount,amazonsChoice,categoryName,priceList,price,freeReturns,freeShipping,soldByName,available,hasCountDown,description,usedCount,usedPrice,imageUrl,varKey,varValue';
+let data = 'id|productName|sellerName|ratingsAverage|ratingsCount|questionsCount|amazonsChoice|categoryName|priceList|price|freeReturns|freeShipping|soldByName|available|hasCountDown|description|usedCount|usedPrice|imageUrl|varKey|varValue\n';
 let rounds = 50;
+let counter = 0;
 const generateRandomData = () => {
   for (let j = 1; j <= 200000; j += 1) {
+    let id = counter += 1;
     let productName = `Clean-O-Bot${j}`;
-    let sellerName = faker.company.companyName();
+    let sellerName = `ABC company${j}`;
     let ratingsAverage = randomNumFromRange(0.5, 5, 'log', 1);
     let ratingsCount = randomNumFromRange(5, 1000);
     let questionsCount = randomNumFromRange(2, 30, 'log');
     let amazonsChoice = randomNumFromRange(0, 1);
-    let categoryName = department;
+    let categoryName = `category${j}`;
     let priceList = listPrices;
     let price = prices();
     let freeReturns = randomNumFromRange(0, 1);
@@ -104,15 +106,15 @@ const generateRandomData = () => {
     let soldByName = `best-company${j}`;
     let available = randomNumFromRange(0, 1, 'log');
     let hasCountDown = randomNumFromRange(0, 1);
-    let description = faker.lorem.lines().replace(/\n/g, '\\n');
+    let description = `thisisadescriptionforaproduct${j}`;
     let usedCount = randomNumFromRange(1, 20);
     let usedPrice = usedPrices();
     let imageUrl = randomUrl();
     let varKey = categoryKey();
     let varValue = categoryValue();
 
-    data += `${productName},${sellerName},${ratingsAverage},${ratingsCount},${questionsCount},${amazonsChoice},${categoryName},${priceList},${price},${freeReturns},${freeShipping},${soldByName},${available},${hasCountDown},${description},${usedCount},${usedPrice},${imageUrl},${varKey},${varValue}\n`;
-
+    data += `${id}|${productName}|${sellerName}|${ratingsAverage}|${ratingsCount}|${questionsCount}|${amazonsChoice}|${categoryName}|${priceList}|${price}|${freeReturns}|${freeShipping}|${soldByName}|${available}|${hasCountDown}|${description}|${usedCount}|${usedPrice}|${imageUrl}|${varKey}|${varValue}\n`;
+    id = null;
     productName = null;
     sellerName = null;
     ratingsAverage = null;
@@ -136,7 +138,7 @@ const generateRandomData = () => {
   }
   if (rounds > 0) {
     rounds -= 1;
-    let drainThis = file.write(data);
+    let drainThis = file.write(data, 'utf8');
     if (!drainThis) {
       drainThis = true;
       data = '';
