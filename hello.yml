@@ -1,0 +1,23 @@
+config:
+  target: 'http://localhost:9002'
+  phases:
+    - duration: 20
+      arrivalRate: 200
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+    - get:
+        url: "/get/9000334"
+    - get:
+        url: "/get/4895743"
+    - get:
+        url: "/get/425988"
+    - get:
+        url: "/get/8976453"
+    
+    
+
+
+

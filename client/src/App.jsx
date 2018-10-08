@@ -41,9 +41,9 @@ class App extends React.Component {
     reqProduct.done((res) => {
       this.setState(res, () => {
         // onload, select the first option for product variation
-        if (res.images.color !== null) {
+        if (res.varKey !== null) {
           this.setState({
-            selectedVariation: Object.keys(Object.values(res.images)[0])[0],
+            selectedVariation: Object.keys(Object.values(res)[0])[0],
           });
         }
       });

@@ -4,16 +4,6 @@ const cats = require('./cats');
 
 // ================================================ data generating functions =====================
 
-const variations = [
-  {
-    category: 'color',
-    data: ['Medium Spring Green', 'Coral', 'Lawn Green', 'Yellow', 'Orange', 'Light Steel Blue', 'Fire Brick', 'Light Grey', 'Dark Goldenrod', 'Burly Wood', 'Dark Slate Blue', 'Cornflower Blue', 'Powder Blue', 'Dark Blue', 'Dark Slate Gray', 'Maroon', 'Silver', 'Light Salmon', 'Seashell', 'Medium Sea Green'],
-  },
-  {
-    category: 'size',
-    data: [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10],
-  },
-];
 const truncateToDecimalPlace = (num, places) => {
   let placesCopy = places || 0;
   placesCopy = 10 ** placesCopy;
@@ -154,7 +144,7 @@ const generateRandomData = () => {
     }
   }
 };
-generateRandomData();
+// generateRandomData();
   
 
   // fs.appendFile('./randomData.csv', data, (error) => {

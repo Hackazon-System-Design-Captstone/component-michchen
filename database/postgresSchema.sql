@@ -1,9 +1,9 @@
   DROP DATABASE IF EXISTS hackazon;
   CREATE DATABASE hackazon;
-  CREATE SCHEMA myschema;
+  USE hackazon;
   
   CREATE TABLE  productinfo (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id INT PRIMARY KEY,
   productName VARCHAR(150),
   sellerName VARCHAR(150),
   ratingsAverage FLOAT,
