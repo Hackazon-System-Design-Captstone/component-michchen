@@ -5,9 +5,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
+const redis = require('./app.js');
 
 const app = express();
 const db = require('./database/db.js');
+
 
 const corsOptions = {
   origin: 'http://localhost:9002',
@@ -20,26 +22,17 @@ app.use(bodyParser.urlencoded({
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use('/', express.static(path.join(__dirname, '/client/dist')));
-app.use((req, res, next) => {
-  console.log(`${req.method} request received at ${req.url}`);
-  next();
-});
-
 
 // get route ================
 
 app.get('/get', (req, res) => {
-  // req.query is the URL query string, and 'id' is the product id i wish to fetch
-  db.getProduct(req.query.id, (err, data) => {
-    if (err) {
-      res.status(503).send(err);
-      console.log('error in server app.get');
-    } else {
-      console.log('this is data', data);
+  redis.get(req.query.id, (result) => {
+    if (result) {
+      const resultJSON = JSON.parse(result);
       res.header('Access-Control-Allow-Origin', '*');
       const {
         id, productname, sellername, ratingsaverage, ratingscount, questionscount, amazonschoice, categoryname, pricelist, price, freereturns, freeshipping, soldbyname, available, hascountdown, description, usedcount, usedprice, imageurl, varkey, varvalue,
-      } = data;
+      } = resultJSON;
       const camelCasedData = {
         productName: productname,
         sellerName: sellername,
@@ -63,23 +56,59 @@ app.get('/get', (req, res) => {
         varValue: varvalue,
         imageUrl: imageurl,
       };
-      res.send(camelCasedData);
+      res.status(200).send(camelCasedData);
+    } else {
+      db.getProduct(req.query.id, (err, data) => {
+        if (err) {
+          res.status(503).send(err);
+        } else {
+          redis.set(req.query.id, JSON.stringify(data), (err, reply) => {
+            console.log(err);
+            console.log(reply);
+          });
+          res.header('Access-Control-Allow-Origin', '*');
+          const {
+            id, productname, sellername, ratingsaverage, ratingscount, questionscount, amazonschoice, categoryname, pricelist, price, freereturns, freeshipping, soldbyname, available, hascountdown, description, usedcount, usedprice, imageurl, varkey, varvalue,
+          } = data;
+          const camelCasedData = {
+            productName: productname,
+            sellerName: sellername,
+            ratingsAverage: ratingsaverage,
+            ratingsCount: ratingscount,
+            questionsCount: questionscount,
+            amazongsChoice: amazonschoice,
+            categoryName: categoryname,
+            priceList: pricelist,
+            price,
+            freeReturns: freereturns,
+            freeShipping: freeshipping,
+            soldByName: soldbyname,
+            available,
+            hasCountdown: hascountdown,
+            description,
+            usedCount: usedcount,
+            usedPrice: usedprice,
+            id,
+            varKey: varkey,
+            varValue: varvalue,
+            imageUrl: imageurl,
+          };
+          res.send(camelCasedData);
+        }
+      });
     }
   });
 });
 
 // post route ================
 
-app.post('/productInfo', bodyParser.json(), (req, res) => {
-  db.addToTable(req.body, (err) => {
-    if (err) {
-      res.status(500).send(err);
-    } else {
-      res.status(201).send();
-    }
+app.post('/productinfo', bodyParser.json(), (req, res) => {
+  db.addToTable(req.body, (err, data) => {
+    if (err) { return console.error(err); }
+    res.status(202).send();
   });
-  res.send('POST request received');
 });
+
 
 // put route =================
 
@@ -91,7 +120,6 @@ app.put('/productInfo/:id', bodyParser.json(), (req, res) => {
       res.status(201).send();
     }
   });
-  res.send('UPDATE request received');
 });
 
 // delete route ==============

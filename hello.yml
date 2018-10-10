@@ -2,20 +2,15 @@ config:
   target: 'http://localhost:9002'
   phases:
     - duration: 20
-      arrivalRate: 200
-  defaults:
-    headers:
-      x-my-service-auth: '987401838271002188298567'
+      arrivalRate: 5
 scenarios:
   - flow:
-    - get:
-        url: "/get/9000334"
-    - get:
-        url: "/get/4895743"
-    - get:
-        url: "/get/425988"
-    - get:
-        url: "/get/8976453"
+      - loop:
+          - get:
+              url: "/get?id={{$randomNumber(9000000, 9500000)}}"
+        count: 500
+    
+    
     
     
 

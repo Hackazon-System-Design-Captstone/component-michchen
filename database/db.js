@@ -1,22 +1,3 @@
-// const mysql = require('mysql');
-
-// const con = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'password',
-//   database: 'amazon',
-
-// });
-
-// con.connect((err) => {
-//   if (err) {
-//     console.log('db.js > connection error', err);
-//   } else {
-//     console.log('connection success!');
-//   }
-// });
-
-
 // // for creating fake data (faker.js)
 // exports.resetTable = (table, cb) => {
 //   con.query(`DELETE FROM ${table};`, () => {
@@ -53,7 +34,6 @@ exports.getProduct = (id, cb) => {
       console.log('this is an error in db query', err);
     } else {
       cb(err, res.rows[0]);
-      console.log('this is res.rows[0]', res.rows[0]);
     }
   });
 };
@@ -71,11 +51,18 @@ exports.deleteFromTable = (id, cb) => {
 // ====================== post to table =================
 
 exports.addToTable = (data, cb) => {
-  client.query('INSERT INTO productInfo (id, productName, sellerName, ratingsAverage, ratingsCount, questionsCount, amazonsChoice, categoryName, priceList, price, freeReturns, freeShipping, soldByName, available, hasCountDown, description, usedCount, usedPrice, imageUrl, varKey, varValue) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-    (data.id, data.productName, data.sellerName, data.ratingsAverage, data.ratingsCount, data.questionsCount,
-    data.amazonsChoice, data.categoryName, data.priceList, data.price, data.freeReturns,
-    data.freeShipping, data.soldByName, data.available, data.hasCountDown, data.description,
-    data.usedPrice, data.imageUrl, data.varKey, data.varValue), cb);
+  console.log(data.usedPrice);
+  client.query(
+    `INSERT INTO productinfo (id, productName, sellerName, ratingsAverage, ratingsCount, questionsCount,
+     amazonsChoice, categoryName, priceList, price, freeReturns, freeShipping, soldByName, available, hasCountDown,
+      description, usedCount, usedPrice, imageUrl, varKey, varValue) VALUES ( 
+    ${data.id}, '${data.productName}', '${data.sellerName}', ${data.ratingsAverage}, ${data.ratingsCount}, ${data.questionsCount},
+    ${data.amazonsChoice}, '${data.categoryName}', ${data.priceList}, ${data.price}, ${data.freeReturns},
+    ${data.freeShipping}, '${data.soldByName}', ${data.available}, ${data.hasCountDown}, '${data.description}', ${data.usedCount}
+    ${data.usedPrice}, '${data.imageUrl}', '${data.varKey}', '${data.varValue}')`, (err, res) => {
+      console.log(err);
+      cb(err, null);
+    });
 };
 // ======================================================
 // exports.insertRow = (query, cb) => {
