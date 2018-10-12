@@ -7,8 +7,8 @@ scenarios:
   - flow:
       - loop:
           - get:
-              url: "/get?id={{$randomNumber(9000000, 9500000)}}"
-        count: 500
+              url: "/get?id={{$randomNumber(9000000, 9100000)}}"
+        count: 200
     
     
     

@@ -25,8 +25,10 @@ app.use('/', express.static(path.join(__dirname, '/client/dist')));
 
 // get route ================
 
+// balancing the load between the two servers:
+const server = ['http://ec2-54-215-202-17.us-west-1.compute.amazonaws.com', 'http://ec2-54-215-202-17.us-west-1.compute.amazonaws.com'];
+let counter = 0;
 app.get('/get', (req, res) => {
-  
   redis.get(req.query.id, (result) => {
     if (result) {
       const resultJSON = JSON.parse(result);
@@ -59,14 +61,18 @@ app.get('/get', (req, res) => {
       };
       res.status(200).send(camelCasedData);
     } else {
-  axios.get(`http://localhost:9003/get?id=${req.query.id}`)
-    .then((response) => {
-      res.send(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
+      counter += 1;
+      console.log(counter);
+      const endpoint = counter % 2;
+      console.log(endpoint);
+      axios.get(`${server[endpoint]}:9003/get?id=${req.query.id}`)
+        .then((response) => {
+          res.send(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   });
 });
 
