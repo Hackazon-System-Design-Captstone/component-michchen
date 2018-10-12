@@ -5,11 +5,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
+const axios = require('axios');
 const redis = require('./app.js');
 
 const app = express();
 const db = require('./database/db.js');
-
 
 const corsOptions = {
   origin: 'http://localhost:9002',
@@ -26,6 +26,7 @@ app.use('/', express.static(path.join(__dirname, '/client/dist')));
 // get route ================
 
 app.get('/get', (req, res) => {
+  
   redis.get(req.query.id, (result) => {
     if (result) {
       const resultJSON = JSON.parse(result);
@@ -58,45 +59,14 @@ app.get('/get', (req, res) => {
       };
       res.status(200).send(camelCasedData);
     } else {
-      db.getProduct(req.query.id, (err, data) => {
-        if (err) {
-          res.status(503).send(err);
-        } else {
-          redis.set(req.query.id, JSON.stringify(data), (err, reply) => {
-            console.log(err);
-            console.log(reply);
-          });
-          res.header('Access-Control-Allow-Origin', '*');
-          const {
-            id, productname, sellername, ratingsaverage, ratingscount, questionscount, amazonschoice, categoryname, pricelist, price, freereturns, freeshipping, soldbyname, available, hascountdown, description, usedcount, usedprice, imageurl, varkey, varvalue,
-          } = data;
-          const camelCasedData = {
-            productName: productname,
-            sellerName: sellername,
-            ratingsAverage: ratingsaverage,
-            ratingsCount: ratingscount,
-            questionsCount: questionscount,
-            amazongsChoice: amazonschoice,
-            categoryName: categoryname,
-            priceList: pricelist,
-            price,
-            freeReturns: freereturns,
-            freeShipping: freeshipping,
-            soldByName: soldbyname,
-            available,
-            hasCountdown: hascountdown,
-            description,
-            usedCount: usedcount,
-            usedPrice: usedprice,
-            id,
-            varKey: varkey,
-            varValue: varvalue,
-            imageUrl: imageurl,
-          };
-          res.send(camelCasedData);
-        }
-      });
-    }
+  axios.get(`http://localhost:9003/get?id=${req.query.id}`)
+    .then((response) => {
+      res.send(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
   });
 });
 

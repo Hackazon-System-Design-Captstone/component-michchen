@@ -13,9 +13,10 @@
 const pg = require('pg');
 
 const client = new pg.Client({
-  user: 'sonia',
-  host: 'localhost',
-  database: 'hackazon',
+  user: 'postgres',
+  host: 'ec2-52-53-202-7.us-west-1.compute.amazonaws.com',
+  database: 'product',
+  password: '$password',
 });
 
 client.connect((err) => {
